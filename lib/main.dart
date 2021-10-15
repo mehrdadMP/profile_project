@@ -1,4 +1,11 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +17,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    Color surfaceColor = Color(0x0dffffff);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -23,93 +31,296 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        primaryColor: Colors.pink.shade400,
+        brightness: Brightness.dark,
+        dividerColor: surfaceColor,
+        scaffoldBackgroundColor: Color.fromARGB(255, 30, 30, 30),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.black),
+        inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
+        textTheme: GoogleFonts.latoTextTheme(
+          TextTheme(
+            bodyText2: TextStyle(fontSize: 15),
+            bodyText1: TextStyle(
+                fontSize: 13, color: Color.fromARGB(200, 255, 255, 255)),
+            headline6: TextStyle(fontWeight: FontWeight.bold),
+            subtitle1: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+enum _SkillType {
+  photoshop,
+  xd,
+  illustrator,
+  afterEffect,
+  lightRoom,
+}
 
-  void _incrementCounter() {
+class _MyHomePageState extends State<MyHomePage> {
+  _SkillType _skill = _SkillType.photoshop;
+  void updateSelectedSkill(_SkillType skillType) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      this._skill = skillType;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+        appBar: AppBar(
+          title: const Text('Curriculum Vitae'),
+          actions: [
+            Icon(CupertinoIcons.chat_bubble),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+              child: Icon(CupertinoIcons.ellipsis_vertical),
             ),
           ],
         ),
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(32),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          'assets/images/profile_image.png',
+                          width: 60,
+                          height: 60,
+                        )),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Brice Séraphin',
+                              style: Theme.of(context).textTheme.subtitle1),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text('Product & Print Designer'),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.location,
+                                size: 14,
+                                color:
+                                    Theme.of(context).textTheme.bodyText1!.color,
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                'Paris, France',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      CupertinoIcons.heart,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 0, 32, 16),
+                child: Text(
+                  'Enthusiastic young computer Geek, Freelance Designer in love of independence, I have alot of experience in graphical projects, and always give the best of myself to bring you to success.',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 16, 32, 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Skills',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(fontWeight: FontWeight.w900)),
+                    SizedBox(width: 2),
+                    Icon(
+                      CupertinoIcons.chevron_down,
+                      size: 12,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Center(
+                child: Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    Skill(
+                      type: _SkillType.photoshop,
+                      title: 'Photoshop',
+                      imagePath: 'assets/images/app_icon_01.png',
+                      shadowColor: Colors.blue,
+                      isActive: _skill == _SkillType.photoshop,
+                      onTap: () {
+                        updateSelectedSkill(_SkillType.photoshop);
+                      },
+                    ),
+                    Skill(
+                      type: _SkillType.xd,
+                      title: 'Adobe XD',
+                      imagePath: 'assets/images/app_icon_05.png',
+                      shadowColor: Colors.pink,
+                      isActive: _skill == _SkillType.xd,
+                      onTap: () {
+                        updateSelectedSkill(_SkillType.xd);
+                      },
+                    ),
+                    Skill(
+                      type: _SkillType.illustrator,
+                      title: 'Illustrator',
+                      imagePath: 'assets/images/app_icon_04.png',
+                      shadowColor: Colors.orange.shade100,
+                      isActive: _skill == _SkillType.illustrator,
+                      onTap: () {
+                        updateSelectedSkill(_SkillType.illustrator);
+                      },
+                    ),
+                    Skill(
+                      type: _SkillType.afterEffect,
+                      title: 'After Effect',
+                      imagePath: 'assets/images/app_icon_03.png',
+                      shadowColor: Colors.blue.shade800,
+                      isActive: _skill == _SkillType.afterEffect,
+                      onTap: () {
+                        updateSelectedSkill(_SkillType.afterEffect);
+                      },
+                    ),
+                    Skill(
+                      type: _SkillType.lightRoom,
+                      title: 'Lightroom',
+                      imagePath: 'assets/images/app_icon_02.png',
+                      shadowColor: Colors.blue,
+                      isActive: _skill == _SkillType.lightRoom,
+                      onTap: () {
+                        updateSelectedSkill(_SkillType.lightRoom);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Personal Information',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(fontWeight: FontWeight.w900)),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        icon: Icon(CupertinoIcons.at),
+                      ),
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        icon: Icon(CupertinoIcons.lock),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+class Skill extends StatelessWidget {
+  final _SkillType type;
+  final String title;
+  final String imagePath;
+  final Color shadowColor;
+  final bool isActive;
+  final Function() onTap;
+  const Skill({
+    Key? key,
+    required this.type,
+    required this.title,
+    required this.imagePath,
+    required this.shadowColor,
+    required this.isActive,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final BorderRadius defaultBorderRadius = BorderRadius.circular(12);
+
+    return InkWell(
+      borderRadius: defaultBorderRadius,
+      onTap: onTap,
+      child: Container(
+        width: 110,
+        height: 110,
+        decoration: isActive
+            ? BoxDecoration(
+                color: Theme.of(context).dividerColor,
+                borderRadius: defaultBorderRadius,
+              )
+            : null,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: isActive
+                  ? BoxDecoration(boxShadow: [
+                      BoxShadow(
+                          color: shadowColor.withOpacity(0.5), blurRadius: 20),
+                    ])
+                  : null,
+              child: Image.asset(
+                imagePath,
+                width: 40,
+                height: 40,
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(title),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
