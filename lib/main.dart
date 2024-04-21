@@ -1,11 +1,9 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,30 +18,44 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.dark;
+  Locale _locale = Locale('en');
   @override
   Widget build(BuildContext context) {
     Color surfaceColor = Color(0x0dffffff);
     Color primaryColor = Colors.pink.shade400;
     return MaterialApp(
       title: 'Flutter Demo',
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: _locale,
       theme: _themeMode == ThemeMode.dark
-          ? MyAppThemeConfig.dark().getTheme()
-          : MyAppThemeConfig.light().getTheme(),
-      home: MyHomePage(
-        toggleThemeMode: () {
-          setState(() {
-            if (_themeMode == ThemeMode.dark)
-              _themeMode = ThemeMode.light;
-            else
-              _themeMode = ThemeMode.dark;
-          });
-        },
-      ),
+          ? MyAppThemeConfig.dark().getTheme(_locale.languageCode)
+          : MyAppThemeConfig.light().getTheme(_locale.languageCode),
+      home: MyHomePage(toggleThemeMode: () {
+        setState(() {
+          if (_themeMode == ThemeMode.dark)
+            _themeMode = ThemeMode.light;
+          else
+            _themeMode = ThemeMode.dark;
+        });
+      }, selectedLanguageChanged: (_Language newSelectedLanguageByUser) {
+        setState(() {
+          _locale = newSelectedLanguageByUser == _Language.en
+              ? Locale('en')
+              : Locale('fa');
+        });
+      }),
     );
   }
 }
 
 class MyAppThemeConfig {
+  static const String faPrimaryFontFamily = 'IranYekan';
   final Color primaryColor = Colors.pink.shade400;
   final Color primaryTextColor;
   final Color secondaryTextColor;
@@ -68,7 +80,7 @@ class MyAppThemeConfig {
         appBarColor = Color.fromARGB(255, 235, 235, 235),
         brightness = Brightness.light;
 
-  ThemeData getTheme() {
+  ThemeData getTheme(String languageCode) {
     return ThemeData(
       // This is the theme of your application.
       //
@@ -95,32 +107,59 @@ class MyAppThemeConfig {
           backgroundColor: appBarColor,
           foregroundColor: primaryTextColor),
       inputDecorationTheme: InputDecorationTheme(
+        labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none),
         filled: true,
         fillColor: surfaceColor,
       ),
-      textTheme: GoogleFonts.latoTextTheme(
-        TextTheme(
-          bodyText2: TextStyle(fontSize: 15, color: primaryTextColor),
-          bodyText1: TextStyle(fontSize: 13, color: secondaryTextColor),
-          headline6:
-              TextStyle(fontWeight: FontWeight.bold, color: primaryTextColor),
-          subtitle1: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: primaryTextColor),
-        ),
-      ),
+      textTheme: languageCode == 'en' ? enPrimaryTextTheme : faPrimaryTextTheme,
     );
   }
+
+  TextTheme get enPrimaryTextTheme => GoogleFonts.latoTextTheme(TextTheme(
+        bodyText2: TextStyle(fontSize: 15, color: primaryTextColor),
+        bodyText1: TextStyle(fontSize: 13, color: secondaryTextColor),
+        headline6:
+            TextStyle(fontWeight: FontWeight.bold, color: primaryTextColor),
+        subtitle1: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor),
+      ));
+
+  TextTheme get faPrimaryTextTheme => TextTheme(
+      bodyText2: TextStyle(
+          fontSize: 15,
+          height: 1.5,
+          color: primaryTextColor,
+          fontFamily: faPrimaryFontFamily),
+      bodyText1: TextStyle(
+          fontSize: 13,
+          height: 1.5,
+          color: secondaryTextColor,
+          fontFamily: faPrimaryFontFamily),
+      caption: TextStyle(fontFamily: faPrimaryFontFamily),
+      headline6: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: primaryTextColor,
+          fontFamily: faPrimaryFontFamily),
+      subtitle1: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: primaryTextColor,
+          fontFamily: faPrimaryFontFamily),
+      button: TextStyle(fontFamily: faPrimaryFontFamily));
 }
 
 class MyHomePage extends StatefulWidget {
   final Function() toggleThemeMode;
-
-  const MyHomePage({Key? key, required this.toggleThemeMode}) : super(key: key);
+  final Function(_Language _language) selectedLanguageChanged;
+  const MyHomePage(
+      {Key? key,
+      required this.toggleThemeMode,
+      required this.selectedLanguageChanged})
+      : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -128,17 +167,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   _SkillType _skill = _SkillType.photoshop;
-  void updateSelectedSkill(_SkillType skillType) {
+  _Language _language = _Language.en;
+
+  void _updateSelectedSkill(_SkillType skillType) {
     setState(() {
       this._skill = skillType;
     });
   }
 
+  void _updateSelectedLanguage(_Language language) {
+    widget.selectedLanguageChanged(language);
+    setState(() {
+      _language = language;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Curriculum Vitae'),
+          title: Text(localization.profileTitle),
           actions: [
             Icon(CupertinoIcons.chat_bubble),
             InkWell(
@@ -173,12 +222,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Brice Séraphin',
+                          Text(localization.name,
                               style: Theme.of(context).textTheme.subtitle1),
                           SizedBox(
                             height: 2,
                           ),
-                          Text('Product & Print Designer'),
+                          Text(localization.job),
                           SizedBox(
                             height: 8,
                           ),
@@ -196,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 width: 3,
                               ),
                               Text(
-                                'Paris, France',
+                                localization.location,
                                 style: Theme.of(context).textTheme.caption,
                               ),
                             ],
@@ -214,8 +263,34 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(32, 0, 32, 16),
                 child: Text(
-                  'Enthusiastic young computer Geek, Freelance Designer in love of independence, I have alot of experience in graphical projects, and always give the best of myself to bring you to success.',
+                  localization.summary,
                   style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(localization.selectedLanguage),
+                    CupertinoSlidingSegmentedControl<_Language>(
+                        groupValue: _language,
+                        thumbColor: Theme.of(context).colorScheme.primary,
+                        children: {
+                          _Language.en: Text(localization.enLanguage,
+                              style: TextStyle(
+                                fontSize: 14,
+                              )),
+                          _Language.fa: Text(
+                            localization.faLanguage,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        },
+                        onValueChanged: (value) {
+                          if (value != null) _updateSelectedLanguage(value);
+                        })
+                  ],
                 ),
               ),
               Divider(),
@@ -224,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Skills',
+                    Text(localization.skills,
                         style: Theme.of(context)
                             .textTheme
                             .bodyText2!
@@ -253,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shadowColor: Colors.blue,
                       isActive: _skill == _SkillType.photoshop,
                       onTap: () {
-                        updateSelectedSkill(_SkillType.photoshop);
+                        _updateSelectedSkill(_SkillType.photoshop);
                       },
                     ),
                     Skill(
@@ -263,7 +338,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shadowColor: Colors.pink,
                       isActive: _skill == _SkillType.xd,
                       onTap: () {
-                        updateSelectedSkill(_SkillType.xd);
+                        _updateSelectedSkill(_SkillType.xd);
                       },
                     ),
                     Skill(
@@ -273,7 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shadowColor: Colors.orange.shade100,
                       isActive: _skill == _SkillType.illustrator,
                       onTap: () {
-                        updateSelectedSkill(_SkillType.illustrator);
+                        _updateSelectedSkill(_SkillType.illustrator);
                       },
                     ),
                     Skill(
@@ -283,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shadowColor: Colors.blue.shade800,
                       isActive: _skill == _SkillType.afterEffect,
                       onTap: () {
-                        updateSelectedSkill(_SkillType.afterEffect);
+                        _updateSelectedSkill(_SkillType.afterEffect);
                       },
                     ),
                     Skill(
@@ -293,7 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shadowColor: Colors.blue,
                       isActive: _skill == _SkillType.lightRoom,
                       onTap: () {
-                        updateSelectedSkill(_SkillType.lightRoom);
+                        _updateSelectedSkill(_SkillType.lightRoom);
                       },
                     ),
                   ],
@@ -305,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Personal Information',
+                    Text(localization.personalInformation,
                         style: Theme.of(context)
                             .textTheme
                             .bodyText2!
@@ -315,7 +390,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     TextField(
                       decoration: InputDecoration(
-                        labelText: 'Email',
+                        labelText: localization.email,
                         prefixIcon: Icon(CupertinoIcons.at),
                       ),
                     ),
@@ -324,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     TextField(
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: localization.password,
                         prefixIcon: Icon(CupertinoIcons.lock),
                       ),
                     ),
@@ -335,7 +410,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
-                            onPressed: () {}, child: Text('Save')))
+                            onPressed: () {}, child: Text(localization.save)))
                   ],
                 ),
               ),
@@ -411,4 +486,9 @@ enum _SkillType {
   illustrator,
   afterEffect,
   lightRoom,
+}
+
+enum _Language {
+  en,
+  fa,
 }
