@@ -1,9 +1,10 @@
 import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:profile_project/l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,14 +19,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.dark;
-  Locale _locale = Locale('en');
+  Locale _locale = const Locale('en');
   @override
   Widget build(BuildContext context) {
-    Color surfaceColor = Color(0x0dffffff);
-    Color primaryColor = Colors.pink.shade400;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -38,16 +38,17 @@ class _MyAppState extends State<MyApp> {
           : MyAppThemeConfig.light().getTheme(_locale.languageCode),
       home: MyHomePage(toggleThemeMode: () {
         setState(() {
-          if (_themeMode == ThemeMode.dark)
+          if (_themeMode == ThemeMode.dark) {
             _themeMode = ThemeMode.light;
-          else
+          } else {
             _themeMode = ThemeMode.dark;
+          }
         });
       }, selectedLanguageChanged: (_Language newSelectedLanguageByUser) {
         setState(() {
           _locale = newSelectedLanguageByUser == _Language.en
-              ? Locale('en')
-              : Locale('fa');
+              ? const Locale('en')
+              : const Locale('fa');
         });
       }),
     );
@@ -67,17 +68,17 @@ class MyAppThemeConfig {
   MyAppThemeConfig.dark()
       : primaryTextColor = Colors.white,
         secondaryTextColor = Colors.white70,
-        surfaceColor = Color(0x0dffffff),
-        backgroundColor = Color.fromARGB(255, 30, 30, 30),
+        surfaceColor = const Color(0x0dffffff),
+        backgroundColor = const Color.fromARGB(255, 30, 30, 30),
         appBarColor = Colors.black,
         brightness = Brightness.dark;
 
   MyAppThemeConfig.light()
       : primaryTextColor = Colors.grey.shade900,
         secondaryTextColor = Colors.grey.shade900.withOpacity(0.8),
-        surfaceColor = Color(0x0d000000),
+        surfaceColor = const Color(0x0d000000),
         backgroundColor = Colors.white,
-        appBarColor = Color.fromARGB(255, 235, 235, 235),
+        appBarColor = const Color.fromARGB(255, 235, 235, 235),
         brightness = Brightness.light;
 
   ThemeData getTheme(String languageCode) {
@@ -98,7 +99,7 @@ class MyAppThemeConfig {
       dividerColor: surfaceColor,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(primaryColor),
+          backgroundColor: WidgetStateProperty.all(primaryColor),
         ),
       ),
       scaffoldBackgroundColor: backgroundColor,
@@ -107,7 +108,8 @@ class MyAppThemeConfig {
           backgroundColor: appBarColor,
           foregroundColor: primaryTextColor),
       inputDecorationTheme: InputDecorationTheme(
-        labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        labelStyle:
+            const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none),
@@ -119,37 +121,37 @@ class MyAppThemeConfig {
   }
 
   TextTheme get enPrimaryTextTheme => GoogleFonts.latoTextTheme(TextTheme(
-        bodyText2: TextStyle(fontSize: 15, color: primaryTextColor),
-        bodyText1: TextStyle(fontSize: 13, color: secondaryTextColor),
-        headline6:
+        bodyMedium: TextStyle(fontSize: 15, color: primaryTextColor),
+        bodyLarge: TextStyle(fontSize: 13, color: secondaryTextColor),
+        titleLarge:
             TextStyle(fontWeight: FontWeight.bold, color: primaryTextColor),
-        subtitle1: TextStyle(
+        titleMedium: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor),
       ));
 
   TextTheme get faPrimaryTextTheme => TextTheme(
-      bodyText2: TextStyle(
+      bodyMedium: TextStyle(
           fontSize: 15,
           height: 1.5,
           color: primaryTextColor,
           fontFamily: faPrimaryFontFamily),
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle(
           fontSize: 13,
           height: 1.5,
           color: secondaryTextColor,
           fontFamily: faPrimaryFontFamily),
-      caption: TextStyle(fontFamily: faPrimaryFontFamily),
-      headline6: TextStyle(
+      bodySmall: const TextStyle(fontFamily: faPrimaryFontFamily),
+      titleLarge: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
           color: primaryTextColor,
           fontFamily: faPrimaryFontFamily),
-      subtitle1: TextStyle(
+      titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: primaryTextColor,
           fontFamily: faPrimaryFontFamily),
-      button: TextStyle(fontFamily: faPrimaryFontFamily));
+      labelLarge: const TextStyle(fontFamily: faPrimaryFontFamily));
 }
 
 class MyHomePage extends StatefulWidget {
@@ -171,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _updateSelectedSkill(_SkillType skillType) {
     setState(() {
-      this._skill = skillType;
+      _skill = skillType;
     });
   }
 
@@ -189,18 +191,18 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(localization.profileTitle),
           actions: [
-            Icon(CupertinoIcons.chat_bubble),
+            const Icon(CupertinoIcons.chat_bubble),
             InkWell(
               onTap: widget.toggleThemeMode,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(8, 0, 16, 0),
                 child: Icon(CupertinoIcons.ellipsis_vertical),
               ),
             ),
           ],
         ),
         body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -215,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: 60,
                           height: 60,
                         )),
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                     ),
                     Expanded(
@@ -223,12 +225,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(localization.name,
-                              style: Theme.of(context).textTheme.subtitle1),
-                          SizedBox(
+                              style: Theme.of(context).textTheme.titleMedium),
+                          const SizedBox(
                             height: 2,
                           ),
                           Text(localization.job),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           Row(
@@ -238,15 +240,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                 size: 14,
                                 color: Theme.of(context)
                                     .textTheme
-                                    .bodyText1!
+                                    .bodyLarge!
                                     .color,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 3,
                               ),
                               Text(
                                 localization.location,
-                                style: Theme.of(context).textTheme.caption,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
                           )
@@ -264,10 +266,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.fromLTRB(32, 0, 32, 16),
                 child: Text(
                   localization.summary,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
                 child: Row(
@@ -279,12 +281,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         thumbColor: Theme.of(context).colorScheme.primary,
                         children: {
                           _Language.en: Text(localization.enLanguage,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                               )),
                           _Language.fa: Text(
                             localization.faLanguage,
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           ),
                         },
                         onValueChanged: (value) {
@@ -293,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(32, 16, 32, 12),
                 child: Row(
@@ -302,17 +304,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(localization.skills,
                         style: Theme.of(context)
                             .textTheme
-                            .bodyText2!
+                            .bodyMedium!
                             .copyWith(fontWeight: FontWeight.w900)),
-                    SizedBox(width: 2),
-                    Icon(
+                    const SizedBox(width: 2),
+                    const Icon(
                       CupertinoIcons.chevron_down,
                       size: 12,
                     ),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               Center(
@@ -374,7 +376,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
                 child: Column(
@@ -383,27 +385,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(localization.personalInformation,
                         style: Theme.of(context)
                             .textTheme
-                            .bodyText2!
+                            .bodyMedium!
                             .copyWith(fontWeight: FontWeight.w900)),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     TextField(
                       decoration: InputDecoration(
                         labelText: localization.email,
-                        prefixIcon: Icon(CupertinoIcons.at),
+                        prefixIcon: const Icon(CupertinoIcons.at),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     TextField(
                       decoration: InputDecoration(
                         labelText: localization.password,
-                        prefixIcon: Icon(CupertinoIcons.lock),
+                        prefixIcon: const Icon(CupertinoIcons.lock),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     SizedBox(
