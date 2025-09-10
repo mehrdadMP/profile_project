@@ -1,6 +1,7 @@
 ### Flutter Profile Page Project
 
-![Group 1](https://github.com/user-attachments/assets/142c9fd1-6fb2-41b7-aca0-f1b47b01dece)
+<img width="4060" height="3148" alt="Profile Project" src="https://github.com/user-attachments/assets/8ff38cda-63f6-4f09-84f4-5bb56e9de73e" />
+
 
 ## 📱 Overview
 A Flutter-based profile page with the following features:
