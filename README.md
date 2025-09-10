@@ -1,6 +1,7 @@
 ### Flutter Profile Page Project
 
-<img width="4060" height="3148" alt="Profile Project" src="https://github.com/user-attachments/assets/8ff38cda-63f6-4f09-84f4-5bb56e9de73e" />
+<img width="4060" height="3148" alt="Profile Project" src="https://github.com/user-attachments/assets/d49fda7c-47f8-423e-8db0-5ddf34632beb" />
+
 
 
 ## 📱 Overview
